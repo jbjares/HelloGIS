@@ -1,0 +1,116 @@
+---
+title: "HelloGIS"
+author: "jbjares"
+date: "Tuesday, May 26, 2015"
+output: ioslides_presentation
+---
+
+## Summary
+This is a reproducible paper, that tries to introduce the reader on friendly "hello world Gis", using some R packages, who I'd like to highlight is from Robinlovelace's studies who could be found at https://github.com/Robinlovelace?tab=repositories.
+Thanks Robin.
+
+
+## Preparing Environment - Install Packages - 1/2
+```{r, installPackages_first, cache=TRUE, echo=TRUE, eval=FALSE}
+
+# The order is important here, take care.
+
+#1) Creating a vector with the name of the basic packages to install
+pkgs <- c("devtools", "shiny", "rgdal",
+          "rgeos", "ggmap", "raster")
+
+
+#2) Install these packages over the vector
+install.packages(pkgs, repos = "http://cran.us.r-project.org")
+```
+
+
+## Preparing Environment - Install Packages - 2/2
+```{r, installPackages_second, cache=TRUE, echo=TRUE, eval=FALSE}
+
+#3) Import devtools library
+library(devtools)
+
+#4) Creating a second vector with the name of robinlovelace's packages. 
+#Thanks Robin :)
+gh_pkgs <- c("rstudio/leaflet", 
+             "robinlovelace/stplanr") 
+
+
+#5) Install them
+install_github(gh_pkgs)
+
+
+#6) Attach them to library
+lapply(c(pkgs, "leaflet", "stplanr"), 
+       library, character.only = T)
+
+```
+
+
+## A global var (named: downloadLink), as an example
+```{r, defineDowloadingLink, cache.vars='downloadLink',cache=TRUE, echo=TRUE, eval=FALSE }
+downloadLink <- paste0("http://www.eurogeographics.org",
+                       "/sites/default/files/",
+                       "EBM_v91_sample_shape.zip")
+```
+- See the correlation between cache.vars='downloadLink' and the variable name on the snippet Above.
+
+
+## Downloading data
+
+```{r,dowloadingLink, cache=TRUE, echo=TRUE, eval=FALSE}
+download.file(downloadLink, paste0(getwd(),"/data.zip"))
+
+```
+
+
+## Unziping data
+```{r,unzipData, cache=TRUE, echo=TRUE, eval=FALSE}
+unzip("data.zip")
+```
+
+
+## Reading The shape file
+```{r,readShape, cache=TRUE, echo=TRUE, eval=FALSE}
+
+lnd <- shapefile("./EBM_v91_sample/StatisticalUnits/NUTS_3.shp")
+
+```
+
+
+## Showing The data content
+```{r,showClassDataContent, cache=TRUE, echo=TRUE, eval=TRUE}
+print(class(lnd)) 
+```
+
+
+## Using google geocode to access NUIG location
+```{r,getNuigLocation, cache=TRUE, echo=TRUE, eval=TRUE, cache.vars='locationNUIG'}
+locationNUIG <- geocode("NUIG",sensor = TRUE)
+```
+
+## Using Robinlovelace API to do the great magic :)
+```{r,theMagic, cache=FALSE, echo=TRUE, eval=TRUE}
+library(leaflet)
+mp <- leaflet(data=locationNUIG)
+mp <- addTiles(map = mp)
+mp <- addCircles(mp, radius = 40)
+mp <- addPopups(mp,popup = "That's NUIG :)")
+mp
+```
+
+## References
+- http://ec.europa.eu/eurostat/data/database
+- http://census.cso.ie/censusasp/saps/boundaries/ED_SA%20Disclaimer1.htm
+- http://census.cso.ie/censusasp/saps/boundaries/Census2011_NUTS3_generalised20m.zip
+- http://www.eurogeographics.org/products-and-services/euroboundarymap
+- http://www.r-bloggers.com/the-leaflet-package-for-online-mapping-in-r/
+- https://rstudio.github.io/leaflet/
+- https://github.com/Robinlovelace?tab=repositories
+
+
+## Conclusion
+That's can be basic, rudimentary but need to be shared, because is very fun!
+Thank you :)
+

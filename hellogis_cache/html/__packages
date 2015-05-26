@@ -1,0 +1,11 @@
+base
+devtools
+shiny
+sp
+rgdal
+rgeos
+ggplot2
+ggmap
+raster
+leaflet
+stplanr
